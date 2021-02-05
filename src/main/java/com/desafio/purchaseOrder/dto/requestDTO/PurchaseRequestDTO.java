@@ -5,7 +5,7 @@ import com.desafio.purchaseOrder.dto.ArticleOrderDTO;
 
 import java.util.ArrayList;
 
-public class purchaseRequestDTO {
+public class PurchaseRequestDTO {
 
     private String userName;
     private ArrayList<ArticleOrderDTO> articlesOrder;

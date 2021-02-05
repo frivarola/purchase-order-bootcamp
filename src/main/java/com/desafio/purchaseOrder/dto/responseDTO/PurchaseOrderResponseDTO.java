@@ -1,5 +1,5 @@
 package com.desafio.purchaseOrder.dto.responseDTO;
 
-public class purchaseOrderResponseDTO {
+public class PurchaseOrderResponseDTO {
     private ReceiptDTO receipt;
 }
