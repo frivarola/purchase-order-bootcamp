@@ -17,7 +17,8 @@ public class PurchaseOrderRepositoryImpl implements PurchaseOrderRepository {
     }
 
 
-    private void addArticleToOrder(String userName, ArrayList<ArticleOrderDTO> order) {
+    @Override
+    public void addArticleToOrder(String userName, ArrayList<ArticleOrderDTO> order) {
         ArrayList<ArticleOrderDTO> orderUpdate = keyValueDB.get(userName);
         orderUpdate.addAll(order);
         keyValueDB.replace(userName, orderUpdate);
