@@ -5,6 +5,12 @@ public class ArticleOrderDTO {
     private Double discount;
     private Integer quantity;
 
+    public ArticleOrderDTO(Integer productId, Double discount, Integer quantity) {
+        this.productId = productId;
+        this.discount = discount;
+        this.quantity = quantity;
+    }
+
     public Integer getProductId() {
         return productId;
     }
