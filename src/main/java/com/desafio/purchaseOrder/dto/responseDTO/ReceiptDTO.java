@@ -1,6 +1,7 @@
 package com.desafio.purchaseOrder.dto.responseDTO;
 
-import com.desafio.purchaseOrder.dto.ArticleDTO;
+import com.desafio.purchaseOrder.model.PurchaseOrderItem;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -9,7 +10,7 @@ public class ReceiptDTO {
     private static Integer iid = 1;
     private String id;
     private String status;
-    private ArrayList<ArticleDTO> articles;
+    private ArrayList<PurchaseOrderItem> articles;
     private Double total;
 
 
@@ -34,11 +35,11 @@ public class ReceiptDTO {
         this.status = status;
     }
 
-    public ArrayList<ArticleDTO> getArticles() {
+    public ArrayList<PurchaseOrderItem> getArticles() {
         return articles;
     }
 
-    public void setArticles(ArrayList<ArticleDTO> articles) {
+    public void setArticles(ArrayList<PurchaseOrderItem> articles) {
         this.articles = articles;
     }
 

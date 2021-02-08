@@ -1,14 +1,12 @@
 package com.desafio.purchaseOrder.controller;
 
 import com.desafio.purchaseOrder.dto.requestDTO.PurchaseRequestDTO;
+import com.desafio.purchaseOrder.dto.responseDTO.CartResponseDTO;
 import com.desafio.purchaseOrder.dto.responseDTO.PurchaseOrderResponseDTO;
 import com.desafio.purchaseOrder.exceptions.PurchaseOrderException;
 import com.desafio.purchaseOrder.service.impl.PurchaseOrderServiceImpl;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -25,7 +23,17 @@ public class PurchaseOrderController {
         try {
             return purchaseOrderService.addPurchaseOrder(purchaseOrderRequest);
         } catch (PurchaseOrderException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontro articulo para el id provisto.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @GetMapping(path = "/cart/{username}")
+    CartResponseDTO getCartByUser(@PathVariable String username){
+        try {
+            return purchaseOrderService.getCartUser(username);
+        } catch (PurchaseOrderException e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontro carrito para el usuario: " + username, e);
         }
     }
 }
