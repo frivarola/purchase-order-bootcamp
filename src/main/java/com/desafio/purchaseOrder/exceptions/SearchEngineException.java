@@ -1,4 +1,4 @@
-package com.desafio.purchaseOrder.SearchEngineConnector;
+package com.desafio.purchaseOrder.exceptions;
 
 public class SearchEngineException extends Exception{
 

@@ -1,4 +1,4 @@
-package com.desafio.purchaseOrder.service.impl;
+package com.desafio.purchaseOrder.exceptions;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
