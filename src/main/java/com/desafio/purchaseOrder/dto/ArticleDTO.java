@@ -2,6 +2,7 @@ package com.desafio.purchaseOrder.dto;
 
 public class ArticleDTO {
 
+    private Integer id;
     private String name;
     private String category;
     private String brand;
@@ -18,6 +19,18 @@ public class ArticleDTO {
     }
 
     public ArticleDTO(String name, String category, String brand, Double price, Integer quantity, Boolean freeShip, String prestige) {
+        this.name = name;
+        this.category = category;
+        this.brand = brand;
+        this.price = price;
+        this.quantity = quantity;
+        this.freeShip = freeShip;
+        this.prestige = prestige;
+    }
+
+
+    public ArticleDTO(Integer id, String name, String category, String brand, Double price, Integer quantity, Boolean freeShip, String prestige) {
+        this.id = id;
         this.name = name;
         this.category = category;
         this.brand = brand;
@@ -91,5 +104,13 @@ public class ArticleDTO {
 
     public void setPrestige(String prestige) {
         this.prestige = prestige;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
