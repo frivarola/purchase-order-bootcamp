@@ -1,4 +1,4 @@
-package com.desafio.purchaseOrder.SearchEngineConnector;
+package com.desafio.purchaseOrder.searchEngineConnector;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
