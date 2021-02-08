@@ -2,7 +2,8 @@ package com.desafio.purchaseOrder.dto.responseDTO;
 
 import com.desafio.purchaseOrder.dto.ArticleDTO;
 import java.util.ArrayList;
-import java.util.UUID;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class ReceiptDTO {
     private static Integer id = 1;
@@ -10,8 +11,9 @@ public class ReceiptDTO {
     private ArrayList<ArticleDTO> articles;
     private Double total;
 
+
     public ReceiptDTO() {
-        this.id = id++;
+        generateID();
         this.status = "PENDING";
     }
 
@@ -45,6 +47,18 @@ public class ReceiptDTO {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    private void generateID(){
+        Calendar c = new GregorianCalendar();
+        StringBuilder builder = new StringBuilder();
+        builder.append(c.get(Calendar.YEAR));
+        builder.append(c.get(Calendar.MONTH));
+        builder.append(c.get(Calendar.DAY_OF_MONTH));
+        builder.append(id);
+        id ++;
+
+        this.setId(Integer.parseInt(builder.toString()));
     }
 }
 
