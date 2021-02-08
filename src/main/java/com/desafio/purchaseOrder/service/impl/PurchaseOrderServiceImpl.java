@@ -1,7 +1,9 @@
 package com.desafio.purchaseOrder.service.impl;
 
 import com.desafio.purchaseOrder.dto.PurchaseOrderDTO;
+import com.desafio.purchaseOrder.dto.responseDTO.CartResponseDTO;
 import com.desafio.purchaseOrder.exceptions.SearchEngineException;
+import com.desafio.purchaseOrder.model.PurchaseOrder;
 import com.desafio.purchaseOrder.model.PurchaseOrderItem;
 import com.desafio.purchaseOrder.searchEngineConnector.SearchEngineService;
 import com.desafio.purchaseOrder.dto.ArticleDTO;
@@ -58,6 +60,19 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             response.setStatusCode(statusCode);
         }
 
+        return response;
+    }
+
+    @Override
+    public CartResponseDTO getCartUser(String username) throws PurchaseOrderException{
+        CartResponseDTO response = null;
+        ArrayList<PurchaseOrderItem> itemsCart = (ArrayList<PurchaseOrderItem>) purchaseOrderDB.getPurchaseOrderItemsByUser(username);
+        if(itemsCart != null || !itemsCart.isEmpty()){
+            PurchaseOrder order = new PurchaseOrder(username, itemsCart);
+            response.setPurchaseOrder(order);
+        } else {
+            throw new PurchaseOrderException("No se encontro carrito para el usuario " + username);
+        }
         return response;
     }
 
