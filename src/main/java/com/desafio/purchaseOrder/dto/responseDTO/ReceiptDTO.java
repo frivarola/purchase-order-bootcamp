@@ -6,22 +6,23 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class ReceiptDTO {
-    private static Integer id = 1;
+    private static Integer iid = 1;
+    private String id;
     private String status;
     private ArrayList<ArticleDTO> articles;
     private Double total;
 
 
     public ReceiptDTO() {
-        generateID();
+        this.id = generateID();
         this.status = "PENDING";
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -49,16 +50,16 @@ public class ReceiptDTO {
         this.total = total;
     }
 
-    private void generateID(){
+    private String generateID(){
         Calendar c = new GregorianCalendar();
         StringBuilder builder = new StringBuilder();
         builder.append(c.get(Calendar.YEAR));
         builder.append(c.get(Calendar.MONTH));
         builder.append(c.get(Calendar.DAY_OF_MONTH));
-        builder.append(id);
-        id ++;
+        builder.append(iid);
+        iid ++;
 
-        this.setId(Integer.parseInt(builder.toString()));
+        return builder.toString();
     }
 }
 
