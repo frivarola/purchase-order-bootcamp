@@ -24,7 +24,7 @@ public class PurchaseOrderRepositoryImpl implements PurchaseOrderRepository {
     private static Map<String, ArrayList<PurchaseOrderItem>> keyValueDB;
     private static String pathDB = "src/main/java/com/desafio/purchaseOrder/repository/orders.json";
     static {
-        keyValueDB = new HashMap<>();
+        keyValueDB = loadDatabase();
     }
 
 
