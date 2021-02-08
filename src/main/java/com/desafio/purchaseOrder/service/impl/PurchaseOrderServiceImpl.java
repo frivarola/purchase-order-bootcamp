@@ -1,6 +1,8 @@
 package com.desafio.purchaseOrder.service.impl;
 
+import com.desafio.purchaseOrder.dto.PurchaseOrderDTO;
 import com.desafio.purchaseOrder.exceptions.SearchEngineException;
+import com.desafio.purchaseOrder.model.PurchaseOrderItem;
 import com.desafio.purchaseOrder.searchEngineConnector.SearchEngineService;
 import com.desafio.purchaseOrder.dto.ArticleDTO;
 import com.desafio.purchaseOrder.dto.ArticleOrderDTO;
@@ -14,6 +16,7 @@ import com.desafio.purchaseOrder.service.PurchaseOrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,20 +35,22 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         PurchaseOrderResponseDTO response = null;
 
         try {
-            ArrayList<ArticleDTO> articlesOrder = getArticles(purchaseOrder.getArticlesOrder());
-            ReceiptDTO receipt = new ReceiptDTO();
+            ArrayList<ArticleDTO> articlesDetail = getArticles(purchaseOrder.getArticlesOrder());
+            ArrayList<PurchaseOrderItem> purchaseOrderItems = purchaseOrderBuilder(purchaseOrder.getArticlesOrder(), articlesDetail);
+            PurchaseOrderDTO order = new PurchaseOrderDTO(purchaseOrder.getUserName(), purchaseOrderItems);
 
-            receipt.setArticles(articlesOrder);
-            receipt.setTotal(calculateTotal(articlesOrder));
+            if (purchaseOrderDB.existOrderUser(order.getUserName())) {
+                purchaseOrderDB.addArticleToOrder(order);
+            } else {
+                purchaseOrderDB.addOrder(order);
+            }
+
+            ReceiptDTO receipt = new ReceiptDTO();
+            receipt.setArticles(articlesDetail);
+            receipt.setTotal(calculateTotal(articlesDetail));
 
             StatusCodeDTO statusCode = new StatusCodeDTO(HttpStatus.NOT_FOUND.value(), "No se encontraron los articulos solicitados.");
             response.setStatusCode(statusCode);
-
-            if (purchaseOrderDB.existOrderUser(purchaseOrder.getUserName())) {
-                purchaseOrderDB.addArticleToOrder(purchaseOrder.getUserName(), purchaseOrder.getArticlesOrder());
-            } else {
-                purchaseOrderDB.addOrder(purchaseOrder);
-            }
 
         } catch (SearchEngineException | PurchaseOrderException e) {
             e.printStackTrace();
@@ -82,5 +87,16 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             articles.add(searchArticleById(art));
         }
         return articles;
+    }
+
+    private ArrayList<PurchaseOrderItem> purchaseOrderBuilder(ArrayList<ArticleOrderDTO> orderArticles,ArrayList<ArticleDTO> articles){
+        ArrayList<PurchaseOrderItem> items = new ArrayList<>();
+        for (ArticleOrderDTO o: orderArticles) {
+            ArticleDTO art = (ArticleDTO) articles.stream().filter(a -> a.getId() == o.getProductId());
+            PurchaseOrderItem newItem = new PurchaseOrderItem(art.getId(), art.getName(), o.getQuantity(), o.getDiscount(), art.getPrice());
+            items.add(newItem);
+        }
+
+        return items;
     }
 }

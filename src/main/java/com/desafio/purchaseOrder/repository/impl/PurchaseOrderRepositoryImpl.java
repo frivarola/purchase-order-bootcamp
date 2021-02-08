@@ -1,7 +1,8 @@
 package com.desafio.purchaseOrder.repository.impl;
 
 import com.desafio.purchaseOrder.dto.ArticleOrderDTO;
-import com.desafio.purchaseOrder.dto.requestDTO.PurchaseRequestDTO;
+import com.desafio.purchaseOrder.dto.PurchaseOrderDTO;
+import com.desafio.purchaseOrder.model.PurchaseOrderItem;
 import com.desafio.purchaseOrder.repository.PurchaseOrderRepository;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,7 +20,7 @@ import java.util.Map;
 
 @Repository
 public class PurchaseOrderRepositoryImpl implements PurchaseOrderRepository {
-    private static Map<String, ArrayList<ArticleOrderDTO>> keyValueDB;
+    private static Map<String, ArrayList<PurchaseOrderItem>> keyValueDB;
     private static String pathDB = "src/main/java/com/desafio/purchaseOrder/repository/orders.json";
     static {
         keyValueDB = new HashMap<>();
@@ -27,18 +28,18 @@ public class PurchaseOrderRepositoryImpl implements PurchaseOrderRepository {
 
 
     @Override
-    public void addArticleToOrder(String userName, ArrayList<ArticleOrderDTO> order) {
-        ArrayList<ArticleOrderDTO> orderUpdate = keyValueDB.get(userName);
-        orderUpdate.addAll(order);
-        keyValueDB.replace(userName, orderUpdate);
+    public void addArticleToOrder(PurchaseOrderDTO order) {
+        ArrayList<PurchaseOrderItem> orderUpdate = keyValueDB.get(order.getUserName());
+        orderUpdate.addAll(order.getItems());
+        keyValueDB.replace(order.getUserName(), orderUpdate);
     }
 
     @Override
-    public void addOrder(PurchaseRequestDTO order){
+    public void addOrder(PurchaseOrderDTO order){
         if(keyValueDB.containsKey(order.getUserName())){
-            addArticleToOrder(order.getUserName(), order.getArticlesOrder());
+            addArticleToOrder(order);
         } else {
-            keyValueDB.put(order.getUserName(), order.getArticlesOrder());
+            keyValueDB.put(order.getUserName(), order.getItems());
         }
 
         writeDatabase();
@@ -51,18 +52,18 @@ public class PurchaseOrderRepositoryImpl implements PurchaseOrderRepository {
     }
 
     @Override
-    public ArrayList<ArticleOrderDTO> getOrderByUser(String user) {
+    public ArrayList<PurchaseOrderItem> getOrderByUser(String user) {
         return keyValueDB.get(user);
     }
 
-    private static Map<String, ArrayList<ArticleOrderDTO>> loadDatabase(){
-        HashMap<String, ArrayList<ArticleOrderDTO>> orders = new HashMap<>();
+    private static Map<String, ArrayList<PurchaseOrderItem>> loadDatabase(){
+        HashMap<String, ArrayList<PurchaseOrderItem>> orders = new HashMap<>();
         File fileDb = null;
 
         try{
             fileDb = ResourceUtils.getFile(pathDB);
             ObjectMapper mapper = new ObjectMapper();
-            TypeReference<HashMap<String, ArrayList<ArticleOrderDTO>>> tf = new TypeReference<>(){};
+            TypeReference<HashMap<String, ArrayList<PurchaseOrderItem>>> tf = new TypeReference<>(){};
             orders = mapper.readValue(fileDb, tf);
 
         } catch (FileNotFoundException e) {
@@ -84,7 +85,7 @@ public class PurchaseOrderRepositoryImpl implements PurchaseOrderRepository {
         try{
             fileDb = ResourceUtils.getFile(pathDB);
             ObjectMapper mapper = new ObjectMapper();
-            TypeReference<HashMap<String, ArrayList<ArticleOrderDTO>>> tf = new TypeReference<>(){};
+            TypeReference<HashMap<String, ArrayList<PurchaseOrderItem>>> tf = new TypeReference<>(){};
             mapper.writeValue(fileDb, keyValueDB);
 
         } catch (FileNotFoundException e) {

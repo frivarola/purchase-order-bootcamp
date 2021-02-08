@@ -1,16 +1,15 @@
 package com.desafio.purchaseOrder.repository;
 
-import com.desafio.purchaseOrder.dto.ArticleOrderDTO;
-import com.desafio.purchaseOrder.dto.requestDTO.PurchaseRequestDTO;
+import com.desafio.purchaseOrder.dto.PurchaseOrderDTO;
+import com.desafio.purchaseOrder.model.PurchaseOrderItem;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public interface PurchaseOrderRepository {
 
-    void addArticleToOrder(String user, ArrayList<ArticleOrderDTO> articlesOrder);
-    void addOrder(PurchaseRequestDTO order);
+    void addArticleToOrder(PurchaseOrderDTO order);
+    void addOrder(PurchaseOrderDTO order);
     boolean existOrderUser(String user);
-    ArrayList<ArticleOrderDTO> getOrderByUser(String user);
+    ArrayList<PurchaseOrderItem> getOrderByUser(String user);
 
 }
