@@ -1,17 +1,21 @@
 package com.desafio.purchaseOrder.service.impl;
 
-import com.desafio.purchaseOrder.SearchEngineConnector.SearchEngineService;
+import com.desafio.purchaseOrder.exceptions.SearchEngineException;
+import com.desafio.purchaseOrder.searchEngineConnector.SearchEngineService;
 import com.desafio.purchaseOrder.dto.ArticleDTO;
 import com.desafio.purchaseOrder.dto.ArticleOrderDTO;
 import com.desafio.purchaseOrder.dto.requestDTO.PurchaseRequestDTO;
 import com.desafio.purchaseOrder.dto.responseDTO.PurchaseOrderResponseDTO;
 import com.desafio.purchaseOrder.dto.responseDTO.ReceiptDTO;
+import com.desafio.purchaseOrder.dto.responseDTO.StatusCodeDTO;
+import com.desafio.purchaseOrder.exceptions.PurchaseOrderException;
 import com.desafio.purchaseOrder.repository.PurchaseOrderRepository;
 import com.desafio.purchaseOrder.service.PurchaseOrderService;
-import com.fasterxml.jackson.databind.util.ArrayBuilders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
@@ -25,33 +29,58 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     public PurchaseOrderResponseDTO addPurchaseOrder(PurchaseRequestDTO purchaseOrder) {
-        if (purchaseOrderDB.existOrderUser(purchaseOrder.getUserName())) {
-            purchaseOrderDB.addArticleToOrder(purchaseOrder.getUserName(), purchaseOrder.getArticlesOrder());
-        } else {
-            purchaseOrderDB.addOrder(purchaseOrder);
+        PurchaseOrderResponseDTO response = null;
+
+        try {
+            ArrayList<ArticleDTO> articlesOrder = getArticles(purchaseOrder.getArticlesOrder());
+            ReceiptDTO receipt = new ReceiptDTO();
+
+            receipt.setArticles(articlesOrder);
+            receipt.setTotal(calculateTotal(articlesOrder));
+
+            StatusCodeDTO statusCode = new StatusCodeDTO(HttpStatus.NOT_FOUND.value(), "No se encontraron los articulos solicitados.");
+            response.setStatusCode(statusCode);
+
+            if (purchaseOrderDB.existOrderUser(purchaseOrder.getUserName())) {
+                purchaseOrderDB.addArticleToOrder(purchaseOrder.getUserName(), purchaseOrder.getArticlesOrder());
+            } else {
+                purchaseOrderDB.addOrder(purchaseOrder);
+            }
+
+        } catch (SearchEngineException | PurchaseOrderException e) {
+            e.printStackTrace();
+            StatusCodeDTO statusCode = new StatusCodeDTO(HttpStatus.NOT_FOUND.value(), e.getMessage());
+            response.setStatusCode(statusCode);
         }
-        PurchaseOrderResponseDTO response = new PurchaseOrderResponseDTO();
-        ReceiptDTO receipt = makeReceiptDTO(purchaseOrder);
-        response.setReceipt(makeReceiptDTO(purchaseOrder));
 
         return response;
+    }
+
+    private ArticleDTO searchArticleById(ArticleOrderDTO art) throws SearchEngineException, PurchaseOrderException {
+        ArticleDTO articleDetail = null;
+        articleDetail = searchEngine.getArticleById(art.getProductId());
+
+        if (articleDetail != null) {
+            if(articleDetail.getQuantity() < art.getQuantity()){
+                return articleDetail;
+            }
+            throw new PurchaseOrderException("No hay stock para el producto con id " + art.getProductId());
+        } else {
+            throw new PurchaseOrderException("No se encontro articulo con id " + art.getProductId());
+        }
+
     }
 
     private Double calculateTotal(ArrayList<ArticleDTO> articles) {
         return articles.stream().mapToDouble(ArticleDTO::getPrice).sum();
     }
 
-    private ReceiptDTO makeReceiptDTO(PurchaseRequestDTO order) {
-        ReceiptDTO receipt = new ReceiptDTO();
-        receipt.setArticles(getArticles(order.getArticlesOrder()));
-        Double total = calculateTotal(receipt.getArticles());
-        receipt.setTotal(total);
-        return receipt;
-    }
-
-    private ArrayList<ArticleDTO> getArticles(ArrayList<ArticleOrderDTO> articlesOrder) {
+    private ArrayList<ArticleDTO> getArticles(ArrayList<ArticleOrderDTO> articlesOrder) throws
+            PurchaseOrderException, SearchEngineException {
         ArrayList<ArticleDTO> articles = new ArrayList<>();
-        articlesOrder.forEach((ArticleOrderDTO art) -> articles.add(searchEngine.getArticleById(art.getProductId())));
+        for (ArticleOrderDTO art : articlesOrder) {
+            articles.add(searchArticleById(art));
+        }
         return articles;
     }
 }
