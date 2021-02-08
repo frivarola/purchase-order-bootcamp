@@ -8,6 +8,18 @@ public class PurchaseOrderItem {
     private Double unitPrice;
     private Double totalPrice;
 
+    public PurchaseOrderItem() {
+    }
+
+    public PurchaseOrderItem(Integer id, String name, Integer quantity, Double discount, Double unitPrice, Double totalPrice) {
+        this.id = id;
+        this.name = name;
+        this.quantity = quantity;
+        this.discount = discount;
+        this.unitPrice = unitPrice;
+        this.totalPrice = totalPrice;
+    }
+
     public PurchaseOrderItem(Integer id, String name, Integer quantity, Double discount, Double unitPrice) {
         this.id = id;
         this.name = name;
