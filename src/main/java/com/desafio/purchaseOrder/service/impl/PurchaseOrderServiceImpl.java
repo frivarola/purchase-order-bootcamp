@@ -31,13 +31,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    public PurchaseOrderResponseDTO addPurchaseOrder(PurchaseRequestDTO purchaseOrder) {
+    public PurchaseOrderResponseDTO addPurchaseOrder(PurchaseRequestDTO purchaseRequest) {
         PurchaseOrderResponseDTO response = null;
 
         try {
-            ArrayList<ArticleDTO> articlesDetail = getArticles(purchaseOrder.getArticlesOrder());
-            ArrayList<PurchaseOrderItem> purchaseOrderItems = purchaseOrderBuilder(purchaseOrder.getArticlesOrder(), articlesDetail);
-            PurchaseOrderDTO order = new PurchaseOrderDTO(purchaseOrder.getUserName(), purchaseOrderItems);
+            ArrayList<ArticleDTO> articlesDetail = getArticles(purchaseRequest.getArticlesOrder());
+            ArrayList<PurchaseOrderItem> purchaseOrderItems = purchaseOrderBuilder(purchaseRequest.getArticlesOrder(), articlesDetail);
+            PurchaseOrderDTO order = new PurchaseOrderDTO(purchaseRequest.getUserName(), purchaseOrderItems);
 
             if (purchaseOrderDB.existOrderUser(order.getUserName())) {
                 purchaseOrderDB.addArticleToOrder(order);

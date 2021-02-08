@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -47,13 +48,14 @@ public class PurchaseOrderRepositoryImpl implements PurchaseOrderRepository {
     }
 
     @Override
-    public boolean existOrderUser(String user) {
-        return keyValueDB.containsKey(user);
+    public List<PurchaseOrderItem> getPurchaseOrderItemsByUser(String user) {
+        ArrayList<PurchaseOrderItem> queryResult = keyValueDB.get(user);
+        return queryResult;
     }
 
     @Override
-    public ArrayList<PurchaseOrderItem> getOrderByUser(String user) {
-        return keyValueDB.get(user);
+    public boolean existOrderUser(String user) {
+        return keyValueDB.containsKey(user);
     }
 
     private static Map<String, ArrayList<PurchaseOrderItem>> loadDatabase(){
