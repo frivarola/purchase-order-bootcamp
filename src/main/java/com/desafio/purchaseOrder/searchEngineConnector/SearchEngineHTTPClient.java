@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class SearchEngineHTTPClient {
+public class SearchEngineHTTPClient{
 
     private String server = "http://localhost:8080";
     private RestTemplate rest;
@@ -22,14 +22,14 @@ public class SearchEngineHTTPClient {
         headers.add("Accept", "*/*");
     }
 
-    public String get(String uri) {
+    public String get(String uri) throws Exception {
         HttpEntity<String> requestEntity = new HttpEntity<String>("", headers);
         ResponseEntity<String> responseEntity = rest.exchange(server + uri, HttpMethod.GET, requestEntity, String.class);
         this.setStatus(responseEntity.getStatusCode());
         return responseEntity.getBody();
     }
 
-    public String post(String uri, String json) {
+    public String post(String uri, String json) throws Exception{
         HttpEntity<String> requestEntity = new HttpEntity<String>(json, headers);
         ResponseEntity<String> responseEntity = rest.exchange(server + uri, HttpMethod.POST, requestEntity, String.class);
         this.setStatus(responseEntity.getStatusCode());

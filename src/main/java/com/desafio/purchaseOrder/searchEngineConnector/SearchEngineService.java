@@ -31,6 +31,9 @@ public class SearchEngineService {
             e.printStackTrace();
             System.out.println("Ocurrio un error al leer el JSON del servicio searchEngine");
             throw new SearchEngineException("Ocurrio un error al intentar buscar los articulos");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SearchEngineException("Servicio search-engine no disponible.");
         }
 
         if (result.isEmpty()) {
@@ -55,6 +58,9 @@ public class SearchEngineService {
             e.printStackTrace();
             System.out.println("Ocurrio un error al leer el JSON del servicio searchEngine");
             throw new SearchEngineException("Ocurrio un error al intentar buscar el articulo.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SearchEngineException("Servicio search-engine no disponible.");
         }
 
         return result.get(0);
